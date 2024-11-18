@@ -70,3 +70,18 @@ public class Main {
     }
 }
 ```
+
+<p>
+    1-) A classe Scanner é importada para permitir a leitura de dados de entrada do usuário (como texto e números).
+    2-) A classe Main contém o método main, que é o ponto de entrada da aplicação, O método main é onde o código é executado. É nele que o menu e a interação com o usuário acontecem.
+    3-) Objeto teatro é criado a partir da classe Teatro.
+    4-) O código entra em um loop infinitp (while (true)) que exibe um menu com 4 opções:
+
+Cadastrar espetáculo
+Cadastrar cliente
+Comprar entradas
+Sair do sistema
+O usuário escolhe uma opção e o número escolhido é lido através do scanner.nextInt().
+
+5-) Dependendo da escolha do usuário, o programa executa uma ação específica. O switch é utilizado para comparar a opção escolhida com os casos definidos.
+</p>
