@@ -15,9 +15,9 @@ public class Main {
             int opcao = scanner.nextInt();
 
             switch (opcao) {
-                case 1: // Cadastrar Espetáculo
+                case 1: 
                     System.out.print("Nome do Espetáculo: ");
-                    scanner.nextLine(); // Consumir a nova linha
+                    scanner.nextLine(); 
                     String nome = scanner.nextLine();
                     System.out.print("Data (dd/mm/yyyy): ");
                     String data = scanner.nextLine();
@@ -28,20 +28,20 @@ public class Main {
                     teatro.cadastrarEspetaculo(nome, data, hora, preco);
                     break;
 
-                case 2: // Cadastrar Cliente
+                case 2: 
                     System.out.print("Nome do Cliente: ");
-                    scanner.nextLine(); // Consumir a nova linha
+                    scanner.nextLine(); 
                     String nomeCliente = scanner.nextLine();
                     System.out.print("CPF: ");
                     String cpfCliente = scanner.nextLine();
                     teatro.cadastrarCliente(nomeCliente, cpfCliente);
                     break;
 
-                case 3: // Compra de Entradas
+                case 3: 
                     teatro.novaCompra();
                     break;
 
-                case 4: // Sair
+                case 4: 
                     System.out.println("Saindo do sistema...");
                     scanner.close();
                     return;
