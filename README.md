@@ -75,13 +75,124 @@ public class Main {
     1-) A classe Scanner é importada para permitir a leitura de dados de entrada do usuário (como texto e números).
     2-) A classe Main contém o método main, que é o ponto de entrada da aplicação, O método main é onde o código é executado. É nele que o menu e a interação com o usuário acontecem.
     3-) Objeto teatro é criado a partir da classe Teatro.
-    4-) O código entra em um loop infinitp (while (true)) que exibe um menu com 4 opções:
-
-Cadastrar espetáculo
-Cadastrar cliente
-Comprar entradas
-Sair do sistema
-O usuário escolhe uma opção e o número escolhido é lido através do scanner.nextInt().
-
+    4-) O código entra em um loop infinitp (while (true)) que exibe um menu com 4 opções: Cadastrar espetáculo | Cadastrar cliente | Comprar entradas | Sair do sistema |O usuário escolhe uma opção e o número escolhido é lido através do scanner.nextInt().
 5-) Dependendo da escolha do usuário, o programa executa uma ação específica. O switch é utilizado para comparar a opção escolhida com os casos definidos.
 </p>
+
+<h2>Classe Teatro:</h2>
+
+```
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Teatro {
+    private ArrayList<Espetaculo> espetaculos;
+    private ArrayList<Cliente> clientes;
+
+    public Teatro() {
+        this.espetaculos = new ArrayList<>();
+        this.clientes = new ArrayList<>();
+    }
+
+    public void cadastrarEspetaculo(String nome, String data, String hora, double preco) {
+        Espetaculo espetaculo = new Espetaculo(nome, data, hora, preco);
+        espetaculos.add(espetaculo);
+        System.out.println("Espetáculo cadastrado com sucesso!");
+    }
+
+    public void cadastrarCliente(String nome, String cpf) {
+        Cliente cliente = new Cliente(nome, cpf);
+        clientes.add(cliente);
+        System.out.println("Cliente cadastrado com sucesso!");
+    }
+
+    public void novaCompra() {
+        if (espetaculos.isEmpty()) {
+            System.out.println("Nenhum espetáculo cadastrado.");
+            return;
+        }
+
+        System.out.println("*** VENDA DE ENTRADAS - ESPETÁCULOS ***");
+        for (int i = 0; i < espetaculos.size(); i++) {
+            System.out.println((i + 1) + ") " + espetaculos.get(i));
+        }
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Selecione um espetáculo: ");
+        int escolhaEspetaculo = scanner.nextInt() - 1;
+
+        if (escolhaEspetaculo < 0 || escolhaEspetaculo >= espetaculos.size()) {
+            System.out.println("Espetáculo inválido.");
+            return;
+        }
+
+        Espetaculo espetaculoSelecionado = espetaculos.get(escolhaEspetaculo);
+        espetaculoSelecionado.apresentaAssentos();
+
+        Pedido pedido = new Pedido();
+        while (true) {
+            System.out.print("Selecione um assento: ");
+            int assento = scanner.nextInt();
+            if (assento < 1 || assento > 50 || !espetaculoSelecionado.assentoDisponivel(assento - 1)) {
+                System.out.println("Assento inválido ou já ocupado.");
+                continue;
+            }
+
+            System.out.println("||| Tipos de Entrada |||");
+            System.out.println("1) Inteira");
+            System.out.println("2) Meia (50% do valor da entrada)");
+            System.out.println("3) Professor (40% do valor da entrada)");
+            System.out.print("Selecione um tipo de entrada: ");
+            int tipoEntrada = scanner.nextInt();
+
+            Entrada entrada = espetaculoSelecionado.novaEntrada(tipoEntrada, assento - 1);
+            pedido.adicionaEntrada(entrada);
+
+            System.out.print("Deseja comprar uma outra entrada (S/N)? ");
+            char resposta = scanner.next().charAt(0);
+            if (resposta != 'S' && resposta != 's') {
+                break;
+            }
+        }
+
+        System.out.print("Informe o CPF do Cliente Cadastrado: ");
+        String cpf = scanner.next();
+        if (verificaCliente(cpf)) {
+            double valorTotal = pedido.calculaValorTotal();
+            System.out.println("Valor Total: R$ " + valorTotal);
+        } else {
+            System.out.println("Cliente não cadastrado. A compra não pode ser concluída.");
+        }
+    }
+
+    private boolean verificaCliente(String cpf) {
+        for (Cliente cliente : clientes) {
+            if (cliente.getCpf().equals(cpf)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+```
+<p>A classe Teatro é um sistema para gerenciar o teatro, onde você pode cadastrar espetáculos e clientes, além de realizar a compra de entradas.</p>
+
+<p>Atributos:</p>
+<p>espetaculos: Uma lista (ArrayList) que armazena os espetáculos cadastrados no sistema. Cada espetáculo é representado por um objeto da classe Espetaculo.
+clientes: Uma lista (ArrayList) que armazena os clientes cadastrados. Cada cliente é representado por um objeto da classe Cliente.</p>
+
+<p>Construtor:</p>
+<p>O construtor da classe inicializa as listas de espetáculos e clientes vazias. Ou seja, quando um objeto Teatro é criado, ele começa sem espetáculos ou clientes.</p>
+
+<p>Métodos:</p>
+
+<p>O método cadastrarEspestáculo permite cadastrar um novo espetáculo no sistema. Ele recebe como parâmetros o nome, data, hora e preço do espetáculo, cria um objeto Espetaculo com esses dados e o adiciona à lista espetaculos.</p>
+
+<p>O método cadastrarCliente permite registrar um cliente no sistema. Ele recebe o nome e o CPF do cliente, cria um objeto Cliente e o adiciona à lista clientes.</p>
+
+<p>O método novaCompra gerencia o processo de compra de ingressos. Ele primeiro verifica se há espetáculos cadastrados. Caso não haja, uma mensagem é exibida e a execução do método é interrompida.</p>
+
+<p>O método verificaCliente verifica se um cliente com o CPF fornecido está cadastrado. Ele percorre a lista de clientes e retorna true se o CPF for encontrado, e false caso contrário.</p>
+
+
+
