@@ -194,5 +194,43 @@ clientes: Uma lista (ArrayList) que armazena os clientes cadastrados. Cada clien
 
 <p>O método verificaCliente verifica se um cliente com o CPF fornecido está cadastrado. Ele percorre a lista de clientes e retorna true se o CPF for encontrado, e false caso contrário.</p>
 
+<h2> Classe Pedido:</h2>
+
+```
+
+import java.util.ArrayList;
+
+public class Pedido {
+    private ArrayList<Entrada> entradas;
+
+    public Pedido() {
+        this.entradas = new ArrayList<>();
+    }
+
+    public void adicionaEntrada(Entrada entrada) {
+        entradas.add(entrada);
+    }
+
+    public double calculaValorTotal() {
+        double total = 0;
+        for (Entrada entrada : entradas) {
+            total += entrada.calculaValor();
+        }
+        return total;
+    }
+}
+```
+
+<P>A classe Pedido é responsável por gerenciar o conjunto de entradas adquiridas durante uma compra no sistema do teatro. Ela contém uma lista de objetos Entrada e métodos para adicionar entradas à lista e calcular o valor total da compra.</P>
+
+<p>Atributos: entradas: Uma lista (ArrayList) que armazena as entradas adquiridas no pedido. Cada entrada é representada por um objeto da classe Entrada.</p>
+
+<p>Construtor: O construtor da classe inicializa a lista de entradas como uma nova instância de ArrayList. Ou seja, quando um objeto Pedido é criado, ele começa com uma lista vazia de entradas. </p>
+
+<p>Método: 
+1-) O método adicionaEntrada recebe um objeto Entrada como parâmetro e o adiciona à lista entradas. Ele é usado para registrar uma nova entrada no pedido, como quando o usuário escolhe um tipo de ingresso e assento.
+    
+2-) O método calculaValorTotal o valor total do pedido somando o valor de cada entrada na lista entradas. Ele percorre todas as entradas do pedido e chama o método calculaValor de cada objeto Entrada para obter o valor de cada ingresso. O valor de todas as entradas é somado e o total é retornado.</p>
+
 
 
