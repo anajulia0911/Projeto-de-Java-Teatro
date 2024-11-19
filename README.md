@@ -71,13 +71,7 @@ public class Main {
 }
 ```
 
-<p>
-    1-) A classe Scanner é importada para permitir a leitura de dados de entrada do usuário (como texto e números).
-    2-) A classe Main contém o método main, que é o ponto de entrada da aplicação, O método main é onde o código é executado. É nele que o menu e a interação com o usuário acontecem.
-    3-) Objeto teatro é criado a partir da classe Teatro.
-    4-) O código entra em um loop infinitp (while (true)) que exibe um menu com 4 opções: Cadastrar espetáculo | Cadastrar cliente | Comprar entradas | Sair do sistema |O usuário escolhe uma opção e o número escolhido é lido através do scanner.nextInt().
-5-) Dependendo da escolha do usuário, o programa executa uma ação específica. O switch é utilizado para comparar a opção escolhida com os casos definidos.
-</p>
+<p>A classe Main oferece um menu interativo para o usuário interagir com o sistema de um teatro. O usuário pode cadastrar espetáculos, cadastrar clientes, realizar compras de ingressos e sair do sistema. A lógica para cadastro e compras é delegada a métodos da classe Teatro, que não está definida aqui, mas que provavelmente contém a implementação desses processos.</p>
 
 <h2>Classe Teatro:</h2>
 
@@ -175,24 +169,12 @@ public class Teatro {
     }
 }
 ```
-<p>A classe Teatro é um sistema para gerenciar o teatro, onde você pode cadastrar espetáculos e clientes, além de realizar a compra de entradas.</p>
+<p>A classe Teatro oferece funcionalidades para:
 
-<p>Atributos:</p>
-<p>espetaculos: Uma lista (ArrayList) que armazena os espetáculos cadastrados no sistema. Cada espetáculo é representado por um objeto da classe Espetaculo.
-clientes: Uma lista (ArrayList) que armazena os clientes cadastrados. Cada cliente é representado por um objeto da classe Cliente.</p>
-
-<p>Construtor:</p>
-<p>O construtor da classe inicializa as listas de espetáculos e clientes vazias. Ou seja, quando um objeto Teatro é criado, ele começa sem espetáculos ou clientes.</p>
-
-<p>Métodos:</p>
-
-<p>O método cadastrarEspestáculo permite cadastrar um novo espetáculo no sistema. Ele recebe como parâmetros o nome, data, hora e preço do espetáculo, cria um objeto Espetaculo com esses dados e o adiciona à lista espetaculos.</p>
-
-<p>O método cadastrarCliente permite registrar um cliente no sistema. Ele recebe o nome e o CPF do cliente, cria um objeto Cliente e o adiciona à lista clientes.</p>
-
-<p>O método novaCompra gerencia o processo de compra de ingressos. Ele primeiro verifica se há espetáculos cadastrados. Caso não haja, uma mensagem é exibida e a execução do método é interrompida.</p>
-
-<p>O método verificaCliente verifica se um cliente com o CPF fornecido está cadastrado. Ele percorre a lista de clientes e retorna true se o CPF for encontrado, e false caso contrário.</p>
+Cadastrar espetáculos e clientes.
+Gerenciar a compra de ingressos, permitindo ao usuário escolher espetáculos, assentos e tipos de ingresso.
+Verificar se o cliente está cadastrado e calcular o valor total da compra.
+Essa classe depende das classes Espetaculo, Cliente, Pedido e Entrada, que são mencionadas mas não fornecidas no código. Essas classes provavelmente contêm detalhes como os dados do espetáculo, a representação do cliente, a lógica do pedido e o cálculo do valor das entradas.</p>
 
 <h2> Classe Pedido:</h2>
 
@@ -221,16 +203,184 @@ public class Pedido {
 }
 ```
 
-<P>A classe Pedido é responsável por gerenciar o conjunto de entradas adquiridas durante uma compra no sistema do teatro. Ela contém uma lista de objetos Entrada e métodos para adicionar entradas à lista e calcular o valor total da compra.</P>
+<P>A classe Pedido tem a função de organizar as entradas adquiridas durante uma compra. Ela permite adicionar entradas e calcular o valor total das entradas do pedido. O cálculo do valor de cada entrada é feito através do método calculaValor, que provavelmente está implementado na classe Entrada, onde o preço de cada tipo de ingresso (inteira, meia, professor, etc.) é calculado.
 
-<p>Atributos: entradas: Uma lista (ArrayList) que armazena as entradas adquiridas no pedido. Cada entrada é representada por um objeto da classe Entrada.</p>
+Essa classe é importante para a gestão das compras no sistema, permitindo a consolidação do total a ser pago por um cliente no final de uma compra.</p>
 
-<p>Construtor: O construtor da classe inicializa a lista de entradas como uma nova instância de ArrayList. Ou seja, quando um objeto Pedido é criado, ele começa com uma lista vazia de entradas. </p>
+<h2>Classe Espetáculo:</h2>
 
-<p>Método: 
-1-) O método adicionaEntrada recebe um objeto Entrada como parâmetro e o adiciona à lista entradas. Ele é usado para registrar uma nova entrada no pedido, como quando o usuário escolhe um tipo de ingresso e assento.
-    
-2-) O método calculaValorTotal o valor total do pedido somando o valor de cada entrada na lista entradas. Ele percorre todas as entradas do pedido e chama o método calculaValor de cada objeto Entrada para obter o valor de cada ingresso. O valor de todas as entradas é somado e o total é retornado.</p>
+```
+
+import java.util.Arrays;
+
+public class Espetaculo {
+    private String nome;
+    private String data;
+    private String hora;
+    private double preco;
+    private boolean[] assentos;
+
+    public Espetaculo(String nome, String data, String hora, double preco) {
+        this.nome = nome;
+        this.data = data;
+        this.hora = hora;
+        this.preco = preco;
+        this.assentos = new boolean[50]; 
+    }
+
+    public boolean assentoDisponivel(int numero) {
+        return !assentos[numero]; 
+    }
+
+    public Entrada novaEntrada(int tipo, int assento) {
+        marcarAssento(assento);
+        switch (tipo) {
+            case 1:
+                return new EntradaInteira(assento, preco);
+            case 2:
+                return new EntradaMeia(assento, preco);
+            case 3:
+                return new EntradaProfessor(assento, preco);
+            default:
+                throw new IllegalArgumentException("Tipo de entrada inválido.");
+        }
+    }
+
+    private void marcarAssento(int assento) {
+        assentos[assento] = true; 
+    }
+
+    public void apresentaAssentos() {
+        System.out.println("||| Assentos Disponíveis |||");
+        for (int i = 0; i < 50; i++) {
+            if (assentos[i]) {
+                System.out.print("XX ");
+            } else {
+                System.out.print((i + 1) + " ");
+            }
+            if ((i + 1) % 10 == 0) {
+                System.out.println();
+            }
+        }
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    @Override
+    public String toString() {
+        return nome + " " + data + " " + hora + " R$ " + preco;
+    }
+}
+```
+
+<P>A classe Espetaculo gerencia as informações sobre um espetáculo, incluindo dados como nome, data, hora e preço do ingresso. Ela também lida com os assentos, verificando sua disponibilidade e marcando-os como ocupados quando um ingresso é vendido. Além disso, permite a criação de entradas para diferentes tipos de ingressos (inteira, meia, professor) e fornece uma representação visual dos assentos disponíveis.</P>
+
+<h2>Classe EntradaProfessor:</h2>
+
+```
+
+public class EntradaProfessor extends Entrada {
+    private double preco;
+
+    public EntradaProfessor(int numeroDoAssento, double preco) {
+        super(numeroDoAssento);
+        this.preco = preco;
+    }
+
+    @Override
+    public double calculaValor() {
+        return preco * 0.4; 
+    }
+}
+```
+
+<p>A classe EntradaProfessor é uma especialização da classe Entrada que define o comportamento do cálculo de preço para ingressos destinados a professores. Ela aplica um desconto de 60% sobre o valor do ingresso integral, retornando apenas 40% do preço original. O construtor da classe recebe o número do assento e o preço integral, e a lógica de cálculo do valor do ingresso é implementada no método calculaValor.</p>
+
+<h2>EntradaMeia:</h2>
+
+```
+
+public class EntradaMeia extends Entrada {
+    private double preco;
+
+    public EntradaMeia(int numeroDoAssento, double preco) {
+        super(numeroDoAssento);
+        this.preco = preco;
+    }
+
+    @Override
+    public double calculaValor() {
+        return preco * 0.5; 
+    }
+}
+```
+<p>A classe EntradaMeia é uma especialização da classe Entrada que implementa o cálculo do valor de ingresso com desconto para meia-entrada. O valor da entrada para meia-entrada é calculado aplicando um desconto de 50% sobre o preço integral do ingresso. O construtor recebe o número do assento e o preço integral, e a lógica de cálculo do valor da entrada é implementada no método calculaValor.</p>
+
+<h2>Classe EntradaInteira:</h2>
+
+```
+
+public class EntradaInteira extends Entrada {
+    private double preco;
+
+    public EntradaInteira(int numeroDoAssento, double preco) {
+        super(numeroDoAssento);
+        this.preco = preco;
+    }
+
+    @Override
+    public double calculaValor() {
+        return preco;
+    }
+}
+```
+
+<p>A classe EntradaInteira é uma especialização da classe Entrada e é usada para representar ingressos sem descontos (ingresso inteiro). O valor do ingresso é o preço integral, que é simplesmente retornado pelo método calculaValor. O construtor recebe o número do assento e o preço integral, e a lógica do cálculo é simples: retornar o valor do ingresso integral sem alteração.</p>
+
+<h2>Classe Entrada:</h2>
+
+```
+
+public abstract class Entrada {
+    protected int numeroDoAssento;
+
+    public Entrada(int numeroDoAssento) {
+        this.numeroDoAssento = numeroDoAssento;
+    }
+
+    public abstract double calculaValor();
+}
+
+```
+
+<p>A classe Entrada é uma classe abstrata que define a estrutura básica para os ingressos no sistema. Ela armazena o número do assento, que é comum a todos os tipos de ingressos, e define um método abstrato calculaValor, que será implementado pelas classes filhas para calcular o preço do ingresso de forma específica, dependendo do tipo de ingresso (inteira, meia, professor, etc.). A ideia de tornar Entrada abstrata é permitir que cada tipo de ingresso tenha seu próprio comportamento ao calcular o valor, mantendo uma estrutura comum para os ingressos.<p/>
+
+<h2>Classe Cliente:</h2>
+
+```
+
+public class Cliente {
+    private String nome;
+    private String cpf;
+
+    public Cliente(String nome, String cpf) {
+        this.nome = nome;
+        this.cpf = cpf;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    @Override
+    public String toString() {
+        return nome + " (CPF: " + cpf + ")";
+    }
+}
+```
+<P>A classe Cliente é uma representação de um cliente no sistema, armazenando informações como nome e CPF. Ela oferece um construtor para inicializar esses dados e um método getCpf para recuperar o CPF. A sobrescrição do método toString permite que os dados do cliente sejam facilmente representados de forma legível em formato de string.</P>
 
 
 
