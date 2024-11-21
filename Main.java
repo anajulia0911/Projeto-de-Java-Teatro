@@ -15,40 +15,20 @@ public class Main {
             int opcao = scanner.nextInt();
 
             switch (opcao) {
-                case 1: 
-                    System.out.print("Nome do Espetáculo: ");
-                    scanner.nextLine(); 
-                    String nome = scanner.nextLine();
-                    System.out.print("Data (dd/mm/yyyy): ");
-                    String data = scanner.nextLine();
-                    System.out.print("Hora (hh:mm): ");
-                    String hora = scanner.nextLine();
-                    System.out.print("Preço da Entrada Inteira: ");
-                    double preco = scanner.nextDouble();
-                    teatro.cadastrarEspetaculo(nome, data, hora, preco);
+                case 1:
+                    teatro.cadastrarEspetaculo();
                     break;
-
-                case 2: 
-                    System.out.print("Nome do Cliente: ");
-                    scanner.nextLine(); 
-                    String nomeCliente = scanner.nextLine();
-                    System.out.print("CPF: ");
-                    String cpfCliente = scanner.nextLine();
-                    teatro.cadastrarCliente(nomeCliente, cpfCliente);
+                case 2:
+                    teatro.cadastrarCliente();
                     break;
-
-                case 3: 
+                case 3:
                     teatro.novaCompra();
                     break;
-
-                case 4: 
-                    System.out.println("Saindo do sistema...");
-                    scanner.close();
+                case 4:
+                    System.out.println("Encerrando o programa...");
                     return;
-
                 default:
-                    System.out.println("Opção inválida. Tente novamente.");
-                    break;
+                    System.out.println("Opção inválida.");
             }
         }
     }
