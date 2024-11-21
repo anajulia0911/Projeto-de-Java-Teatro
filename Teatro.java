@@ -1,26 +1,10 @@
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Teatro {
-    private ArrayList<Espetaculo> espetaculos;
-    private ArrayList<Cliente> clientes;
-
-    public Teatro() {
-        this.espetaculos = new ArrayList<>();
-        this.clientes = new ArrayList<>();
-    }
-
-    public void cadastrarEspetaculo(String nome, String data, String hora, double preco) {
-        Espetaculo espetaculo = new Espetaculo(nome, data, hora, preco);
-        espetaculos.add(espetaculo);
-        System.out.println("Espetáculo cadastrado com sucesso!");
-    }
-
-    public void cadastrarCliente(String nome, String cpf) {
-        Cliente cliente = new Cliente(nome, cpf);
-        clientes.add(cliente);
-        System.out.println("Cliente cadastrado com sucesso!");
-    }
+    private List<Espetaculo> espetaculos = new ArrayList<>();
+    private List<Cliente> clientes = new ArrayList<>();
 
     public void novaCompra() {
         if (espetaculos.isEmpty()) {
@@ -30,11 +14,16 @@ public class Teatro {
 
         System.out.println("*** VENDA DE ENTRADAS - ESPETÁCULOS ***");
         for (int i = 0; i < espetaculos.size(); i++) {
-            System.out.println((i + 1) + ") " + espetaculos.get(i));
+            System.out.printf("%d) %s %s %s R$ %.2f\n",
+                    i + 1,
+                    espetaculos.get(i).getNome(),
+                    espetaculos.get(i).getData(),
+                    espetaculos.get(i).getHora(),
+                    espetaculos.get(i).getPreco());
         }
 
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Selecione um espetáculo: ");
+        Scanner scanner = new Scanner(System.in);
         int escolhaEspetaculo = scanner.nextInt() - 1;
 
         if (escolhaEspetaculo < 0 || escolhaEspetaculo >= espetaculos.size()) {
@@ -42,51 +31,87 @@ public class Teatro {
             return;
         }
 
-        Espetaculo espetaculoSelecionado = espetaculos.get(escolhaEspetaculo);
-        espetaculoSelecionado.apresentaAssentos();
-
+        Espetaculo espetaculo = espetaculos.get(escolhaEspetaculo);
         Pedido pedido = new Pedido();
+
         while (true) {
+            espetaculo.apresentaAssentos();
             System.out.print("Selecione um assento: ");
             int assento = scanner.nextInt();
-            if (assento < 1 || assento > 50 || !espetaculoSelecionado.assentoDisponivel(assento - 1)) {
-                System.out.println("Assento inválido ou já ocupado.");
+
+            if (!espetaculo.isAssentoDisponivel(assento)) {
+                System.out.println("Assento indisponível.");
                 continue;
             }
 
             System.out.println("||| Tipos de Entrada |||");
             System.out.println("1) Inteira");
-            System.out.println("2) Meia (50% do valor da entrada)");
-            System.out.println("3) Professor (40% do valor da entrada)");
+            System.out.println("2) Meia 50% do valor da entrada");
+            System.out.println("3) Professor 40% do valor da entrada");
             System.out.print("Selecione um tipo de entrada: ");
             int tipoEntrada = scanner.nextInt();
 
-            Entrada entrada = espetaculoSelecionado.novaEntrada(tipoEntrada, assento - 1);
-            pedido.adicionaEntrada(entrada);
+            Entrada entrada = espetaculo.novaEntrada(tipoEntrada, assento);
+            if (entrada != null) {
+                pedido.adicionaEntrada(entrada);
+                System.out.println("Entrada adicionada.");
+            }
 
             System.out.print("Deseja comprar uma outra entrada (S/N)? ");
-            char resposta = scanner.next().charAt(0);
-            if (resposta != 'S' && resposta != 's') {
-                break;
-            }
+            String continuar = scanner.next();
+            if (!continuar.equalsIgnoreCase("S")) break;
         }
 
         System.out.print("Informe o CPF do Cliente Cadastrado: ");
         String cpf = scanner.next();
-        if (verificaCliente(cpf)) {
-            double valorTotal = pedido.calculaValorTotal();
-            System.out.println("Valor Total: R$ " + valorTotal);
-        } else {
-            System.out.println("Cliente não cadastrado. A compra não pode ser concluída.");
+        Cliente cliente = buscarCliente(cpf);
+
+        if (cliente == null) {
+            System.out.println("Cliente não encontrado.");
+            return;
         }
+
+        cliente.adicionaPedido(pedido);
+        double total = pedido.calculaValorTotal();
+        System.out.printf("Valor Total: R$ %.2f\n", total);
     }
 
-    private boolean verificaCliente(String cpf) {
+    public void cadastrarEspetaculo() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("*** CADASTRO DE ESPETÁCULO ***");
+        System.out.print("Nome do Espetáculo: ");
+        String nome = scanner.nextLine();
+        System.out.print("Data: ");
+        String data = scanner.nextLine();
+        System.out.print("Hora: ");
+        String hora = scanner.nextLine();
+        System.out.print("Preço da Entrada Inteira: ");
+        double preco = scanner.nextDouble();
+
+        Espetaculo espetaculo = new Espetaculo(nome, data, hora, preco);
+        espetaculos.add(espetaculo);
+        System.out.println("Espetáculo cadastrado com sucesso!");
+    }
+
+    public void cadastrarCliente() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("*** CADASTRO DE CLIENTE ***");
+        System.out.print("Nome do Cliente: ");
+        String nome = scanner.nextLine();
+        System.out.print("CPF: ");
+        String cpf = scanner.nextLine();
+
+        Cliente cliente = new Cliente(nome, cpf);
+        clientes.add(cliente);
+        System.out.println("Cliente cadastrado com sucesso!");
+    }
+
+    private Cliente buscarCliente(String cpf) {
         for (Cliente cliente : clientes) {
             if (cliente.getCpf().equals(cpf)) {
-                return true;
+                return cliente;
             }
         }
-        return false;
+        return null;
     }
 }
