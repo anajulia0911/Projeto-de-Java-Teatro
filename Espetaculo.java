@@ -1,27 +1,35 @@
-
-import java.util.Arrays;
-
 public class Espetaculo {
     private String nome;
     private String data;
     private String hora;
     private double preco;
-    private boolean[] assentos;
+    private boolean[] assentos = new boolean[50];
 
     public Espetaculo(String nome, String data, String hora, double preco) {
         this.nome = nome;
         this.data = data;
         this.hora = hora;
         this.preco = preco;
-        this.assentos = new boolean[50]; // Inicialmente todos os assentos estão disponíveis
     }
 
-    public boolean assentoDisponivel(int numero) {
-        return !assentos[numero]; // Retorna true se o assento não estiver ocupado
+    public void apresentaAssentos() {
+        System.out.println("||| Assentos Disponíveis |||");
+        for (int i = 0; i < assentos.length; i++) {
+            if (i % 10 == 0) System.out.println();
+            System.out.print(assentos[i] ? "XX " : (i + 1) + " ");
+        }
+        System.out.println();
+    }
+
+    public boolean isAssentoDisponivel(int assento) {
+        return !assentos[assento - 1];
     }
 
     public Entrada novaEntrada(int tipo, int assento) {
-        marcarAssento(assento);
+        if (assento < 1 || assento > 50 || assentos[assento - 1]) {
+            return null;
+        }
+        assentos[assento - 1] = true;
         switch (tipo) {
             case 1:
                 return new EntradaInteira(assento, preco);
@@ -30,34 +38,23 @@ public class Espetaculo {
             case 3:
                 return new EntradaProfessor(assento, preco);
             default:
-                throw new IllegalArgumentException("Tipo de entrada inválido.");
+                return null;
         }
     }
 
-    private void marcarAssento(int assento) {
-        assentos[assento] = true; // Marca o assento como ocupado
+    public String getNome() {
+        return nome;
     }
 
-    public void apresentaAssentos() {
-        System.out.println("||| Assentos Disponíveis |||");
-        for (int i = 0; i < 50; i++) {
-            if (assentos[i]) {
-                System.out.print("XX ");
-            } else {
-                System.out.print((i + 1) + " ");
-            }
-            if ((i + 1) % 10 == 0) {
-                System.out.println();
-            }
-        }
+    public String getData() {
+        return data;
+    }
+
+    public String getHora() {
+        return hora;
     }
 
     public double getPreco() {
         return preco;
-    }
-
-    @Override
-    public String toString() {
-        return nome + " " + data + " " + hora + " R$ " + preco;
     }
 }
